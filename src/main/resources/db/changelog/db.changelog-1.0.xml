@@ -1,0 +1,372 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="jguerrero" id="201901291211_create_tables">
+
+
+        <createTable tableName="order_detail">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="pk_order_detail"/>
+            </column>
+
+            <column name="reception_date" type="DATETIME"/>
+            <column name="estimated_completion_date" type="DATETIME"/>
+            <column name="license_plate" type="VARCHAR(30)"/>
+            <column name="seats_number" type="INT(8)"/>
+            <column name="vehicle_category_id" type="BIGINT"/>
+            <column name="order_status_id" type="INT"/>
+
+        </createTable>
+
+
+        <createTable tableName="order_status">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints primaryKey="true" primaryKeyName="pk_order_status"/>
+            </column>
+            <column name="name" type="VARCHAR(30)"/>
+        </createTable>
+
+        <createTable tableName="repair">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="pk_repair"/>
+            </column>
+            <column name="name" type="VARCHAR(30)"/>
+            <column name="order_detail_id" type="BIGINT"/>
+            <column name="repair_type_id" type="BIGINT"/>
+            <column name="repair_status_id" type="INT"/>
+        </createTable>
+
+        <createTable tableName="repair_status">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints primaryKey="true" primaryKeyName="pk_repair_status"/>
+            </column>
+            <column name="name" type="VARCHAR(30)"/>
+        </createTable>
+
+        <createTable tableName="repair_type">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="pk_repair_type"/>
+            </column>
+
+            <column name="name" type="VARCHAR(100)"/>
+            <column name="completion_time_in_minutes" type="INT"/>
+
+        </createTable>
+
+        <createTable tableName="vehicle_category">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="pk_vehicle_category"/>
+            </column>
+
+            <column name="name" type="VARCHAR(100)"/>
+
+        </createTable>
+
+        <createTable tableName="work_station">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="pk_work_station"/>
+            </column>
+
+            <column name="name" type="VARCHAR(100)"/>
+            <column name="start_hour" type="INT(3)"/>
+            <column name="end_hour" type="INT(3)"/>
+
+        </createTable>
+
+        <createTable tableName="work_station_days_of_week">
+            <column name="work_station_id" type="BIGINT"/>
+            <column name="days_of_week" type="INT"/>
+        </createTable>
+
+        <createTable tableName="work_station_vehicle_categories">
+            <column name="work_stations_id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="pk_work_station_vehicle_categories_work_station"/>
+            </column>
+            <column name="vehicle_categories_id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="pk_work_station_vehicle_categories_vehicle_category"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="work_station_repair_types">
+            <column name="work_stations_id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="pk_work_station_repair_types_repair_type"/>
+            </column>
+            <column name="repair_types_id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="pk_work_station_repair_types_vehicle_category"/>
+            </column>
+        </createTable>
+
+
+        <addForeignKeyConstraint baseColumnNames="vehicle_category_id"
+                                 baseTableName="order_detail"
+                                 constraintName="fk_order_detail_vehicle_category"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="vehicle_category"/>
+
+        <addForeignKeyConstraint baseColumnNames="order_status_id"
+                                 baseTableName="order_detail"
+                                 constraintName="fk_order_detail_order_status"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="order_status"/>
+
+        <addForeignKeyConstraint baseColumnNames="order_detail_id"
+                                 baseTableName="repair"
+                                 constraintName="fk_repair_order_detail"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="order_detail"/>
+
+        <addForeignKeyConstraint baseColumnNames="repair_type_id"
+                                 baseTableName="repair"
+                                 constraintName="fk_repair_repair_type_id"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="repair_type"/>
+
+
+        <addForeignKeyConstraint baseColumnNames="repair_status_id"
+                                 baseTableName="repair"
+                                 constraintName="fk_repair_repair_status_id"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="repair_status"/>
+
+        <addForeignKeyConstraint baseColumnNames="work_stations_id"
+                                 baseTableName="work_station_vehicle_categories"
+                                 constraintName="fk_work_station_vehicle_categories_work_station"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="work_station"/>
+
+        <addForeignKeyConstraint baseColumnNames="vehicle_categories_id"
+                                 baseTableName="work_station_vehicle_categories"
+                                 constraintName="fk_work_station_vehicle_categories_vehicle_category"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="vehicle_category"/>
+
+        <addForeignKeyConstraint baseColumnNames="work_stations_id"
+                                 baseTableName="work_station_repair_types"
+                                 constraintName="fk_work_station_repair_types_work_station"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="work_station"/>
+
+        <addForeignKeyConstraint baseColumnNames="repair_types_id"
+                                 baseTableName="work_station_repair_types"
+                                 constraintName="fk_work_station_repair_types_repair_type"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="repair_type"/>
+
+
+    </changeSet>
+
+    <changeSet author="jguerrero" id="201903041213_populate_tables">
+        <insert tableName="order_status">
+            <column name="name" value="Pending"/>
+        </insert>
+        <insert tableName="order_status">
+            <column name="name" value="Completed"/>
+        </insert>
+        <insert tableName="order_status">
+            <column name="name" value="Cancelled"/>
+        </insert>
+        <insert tableName="order_status">
+            <column name="name" value="Won't do"/>
+        </insert>
+
+
+        <insert tableName="repair_status">
+            <column name="name" value="Pending"/>
+        </insert>
+        <insert tableName="repair_status">
+            <column name="name" value="Completed"/>
+        </insert>
+        <insert tableName="repair_status">
+            <column name="name" value="Cancelled"/>
+        </insert>
+        <insert tableName="repair_status">
+            <column name="name" value="Too Hard"/>
+        </insert>
+        <insert tableName="repair_status">
+            <column name="name" value="No Equipment"/>
+        </insert>
+        <insert tableName="repair_status">
+            <column name="name" value="No Qualified Personal"/>
+        </insert>
+        <insert tableName="repair_status">
+            <column name="name" value="Impossible"/>
+        </insert>
+
+
+        <insert tableName="repair_type">
+            <column name="name" value="Painting"/>
+            <column name="completion_time_in_minutes" value="300"/>
+        </insert>
+        <insert tableName="repair_type">
+            <column name="name" value="Fix Tires"/>
+            <column name="completion_time_in_minutes" value="120"/>
+        </insert>
+        <insert tableName="repair_type">
+            <column name="name" value="Fix Motor"/>
+            <column name="completion_time_in_minutes" value="600"/>
+        </insert>
+
+
+        <insert tableName="vehicle_category">
+            <column name="name" value="Motorcycle"/>
+        </insert>
+        <insert tableName="vehicle_category">
+            <column name="name" value="Car"/>
+        </insert>
+        <insert tableName="vehicle_category">
+            <column name="name" value="Minibus"/>
+        </insert>
+        <insert tableName="vehicle_category">
+            <column name="name" value="Bus"/>
+        </insert>
+        <insert tableName="vehicle_category">
+            <column name="name" value="Truck"/>
+        </insert>
+
+
+        <insert tableName="work_station">
+            <column name="name" value="Buses and trucks"/>
+            <column name="start_hour" value="08"/>
+            <column name="end_hour" value="20"/>
+        </insert>
+        <insert tableName="work_station">
+            <column name="name" value="Motorcycles"/>
+            <column name="start_hour" value="08"/>
+            <column name="end_hour" value="16"/>
+        </insert>
+        <insert tableName="work_station">
+            <column name="name" value="Cars"/>
+            <column name="start_hour" value="07"/>
+            <column name="end_hour" value="22"/>
+        </insert>
+
+        <insert tableName="work_station_days_of_week">
+            <column name="work_station_id" value="1"/>
+            <column name="days_of_week" value="1"/>
+        </insert>
+        <insert tableName="work_station_days_of_week">
+            <column name="work_station_id" value="1"/>
+            <column name="days_of_week" value="2"/>
+        </insert>
+        <insert tableName="work_station_days_of_week">
+            <column name="work_station_id" value="1"/>
+            <column name="days_of_week" value="3"/>
+        </insert>
+        <insert tableName="work_station_days_of_week">
+            <column name="work_station_id" value="2"/>
+            <column name="days_of_week" value="3"/>
+        </insert>
+        <insert tableName="work_station_days_of_week">
+            <column name="work_station_id" value="2"/>
+            <column name="days_of_week" value="4"/>
+        </insert>
+        <insert tableName="work_station_days_of_week">
+            <column name="work_station_id" value="2"/>
+            <column name="days_of_week" value="5"/>
+        </insert>
+        <insert tableName="work_station_days_of_week">
+            <column name="work_station_id" value="3"/>
+            <column name="days_of_week" value="0"/>
+        </insert>
+        <insert tableName="work_station_days_of_week">
+            <column name="work_station_id" value="3"/>
+            <column name="days_of_week" value="1"/>
+        </insert>
+        <insert tableName="work_station_days_of_week">
+            <column name="work_station_id" value="3"/>
+            <column name="days_of_week" value="2"/>
+        </insert>
+        <insert tableName="work_station_days_of_week">
+            <column name="work_station_id" value="3"/>
+            <column name="days_of_week" value="3"/>
+        </insert>
+        <insert tableName="work_station_days_of_week">
+            <column name="work_station_id" value="3"/>
+            <column name="days_of_week" value="4"/>
+        </insert>
+        <insert tableName="work_station_days_of_week">
+            <column name="work_station_id" value="3"/>
+            <column name="days_of_week" value="5"/>
+        </insert>
+        <insert tableName="work_station_days_of_week">
+            <column name="work_station_id" value="3"/>
+            <column name="days_of_week" value="6"/>
+        </insert>
+
+
+        <insert tableName="work_station_vehicle_categories">
+            <column name="work_stations_id" value="1"/>
+            <column name="vehicle_categories_id" value="4"/>
+        </insert>
+        <insert tableName="work_station_vehicle_categories">
+            <column name="work_stations_id" value="1"/>
+            <column name="vehicle_categories_id" value="5"/>
+        </insert>
+        <insert tableName="work_station_vehicle_categories">
+            <column name="work_stations_id" value="2"/>
+            <column name="vehicle_categories_id" value="1"/>
+        </insert>
+        <insert tableName="work_station_vehicle_categories">
+            <column name="work_stations_id" value="3"/>
+            <column name="vehicle_categories_id" value="2"/>
+        </insert>
+
+        <insert tableName="work_station_repair_types">
+            <column name="work_stations_id" value="1"/>
+            <column name="repair_types_id" value="1"/>
+        </insert>
+        <insert tableName="work_station_repair_types">
+            <column name="work_stations_id" value="1"/>
+            <column name="repair_types_id" value="2"/>
+        </insert>
+        <insert tableName="work_station_repair_types">
+            <column name="work_stations_id" value="1"/>
+            <column name="repair_types_id" value="3"/>
+        </insert>
+        <insert tableName="work_station_repair_types">
+            <column name="work_stations_id" value="2"/>
+            <column name="repair_types_id" value="1"/>
+        </insert>
+        <insert tableName="work_station_repair_types">
+            <column name="work_stations_id" value="2"/>
+            <column name="repair_types_id" value="2"/>
+        </insert>
+        <insert tableName="work_station_repair_types">
+            <column name="work_stations_id" value="2"/>
+            <column name="repair_types_id" value="3"/>
+        </insert>
+        <insert tableName="work_station_repair_types">
+            <column name="work_stations_id" value="3"/>
+            <column name="repair_types_id" value="1"/>
+        </insert>
+        <insert tableName="work_station_repair_types">
+            <column name="work_stations_id" value="3"/>
+            <column name="repair_types_id" value="2"/>
+        </insert>
+        <insert tableName="work_station_repair_types">
+            <column name="work_stations_id" value="3"/>
+            <column name="repair_types_id" value="3"/>
+        </insert>
+
+    </changeSet>
+
+</databaseChangeLog>
